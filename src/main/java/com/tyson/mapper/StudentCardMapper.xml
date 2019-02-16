@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyson.mapper.StudentCardMapper">
+    <resultMap id="scMap" type="studentCard">
+        <id property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="note" column="note"/>
+        <result column="sid" property="sid"/>
+    </resultMap>
+    <select id="findStudentCardByStudentId" parameterType="int" resultMap="scMap">
+        select id, note, sid from student_card where sid = #{sid}
+    </select>
+
+</mapper>

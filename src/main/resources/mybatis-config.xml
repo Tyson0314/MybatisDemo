@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="db.properties"/>
+    <settings>
+        <!--打开延迟加载的开关-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--按需加载-->
+        <setting name="aggressiveLazyLoading" value="false"/>
+
+        <setting name="defaultExecutorType" value="BATCH"/>
+    </settings>
+
+    <!--定义别名-->
+    <typeAliases>
+        <!--<typeAlias alias="role" type="com.tyson.pojo.Role"/>-->
+        <!--自动扫描，默认别名为首字母小写的类名-->
+        <package name="com.tyson.pojo"/>
+        <package name="com.tyson.entity"/>
+    </typeAliases>
+    <!--类型处理器-->
+    <typeHandlers>
+<!--        <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler"
+                     javaType="com.tyson.entity.Sex"/>-->
+        <!--<typeHandler jdbcType="VARCHAR" javaType="java.util.Date" handler="com.tyson.typeHandler.MyDateTypeHandler"/>-->
+        <!--扫描包-->
+        <package name="com.tyson.typeHandler"/>
+    </typeHandlers>
+
+    <!--默认使用development数据库构建环境-->
+    <environments default="development">
+        <environment id="development">
+            <!--采用JDBC事务管理-->
+            <transactionManager type="JDBC">
+                <property name="autoCommit" value="false"/>
+            </transactionManager>
+            <!--配置数据库连接信息-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--定义映射器-->
+    <!--resource：引入类路径下的资源
+        URL：引入网络或磁盘的资源
+        class：引用注册接口
+        1.有sql映射文件，映射文件名必须和接口同名，并且放在与接口同一目录下；
+        2.没有sql映射文件，所有的sql都是基于注解写在接口上。
+    -->
+    <mappers>
+        <!--方式一：通过映射文件注册 Mapper-->
+        <!--<mapper resource="RoleMapper.xml"/>-->
+
+        <!-- 方式二：通过mapper元素的class属性可以指定一个Mapper接口进行注册 -->
+        <!-- 基于映射文件的接口。映射文件名必须和接口同名，并且放在与接口同一目录下-->
+        <!--<mapper class="com.tyson.mapper.RoleMapper"/>-->
+        <!-- 基于注解的接口。没有sql映射文件，所有的sql都是基于注解写在接口上-->
+        <!--<mapper class="com.tyson.mapper.RoleMapper1"/>-->
+
+        <!-- 方式三：通过package元素将指定包下面的所有Mapper接口进行注册
+        批量注册 ：基于映射文件的接口与映射文件必须在同一个包下
+        name：包的全类名 -->
+        <package name="com.tyson.mapper"/>
+    </mappers>
+</configuration>

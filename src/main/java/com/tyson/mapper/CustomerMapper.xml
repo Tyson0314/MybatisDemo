@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyson.mapper.CustomerMapper">
+    <insert id="insertCustomer" parameterType="com.tyson.pojo.Customer">
+        <!--order为BEFORE，uuid()在insert语句插入之前执行-->
+        <selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert customer(id, name) values(#{id}, #{name})
+    </insert>
+</mapper>

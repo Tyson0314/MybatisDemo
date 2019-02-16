@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyson.mapper.StudentLectureMapper">
+    <resultMap id="studentLectureMap" type="com.tyson.entity.StudentLecture">
+        <id column="id" property="id"/>
+        <result property="grade" column="grade"/>
+        <association property="lecture" column="lecture_id" fetchType="eager"
+                     select="com.tyson.mapper.LectureMapper.findLectureById"/>
+    </resultMap>
+    <select id="findStudentLectureByStudentId" parameterType="int" resultMap="studentLectureMap">
+        select sid as studentId, grade, lecture_id from student_lecture where sid = #{sid}
+    </select>
+</mapper>

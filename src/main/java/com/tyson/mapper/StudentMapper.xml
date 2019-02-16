@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyson.mapper.StudentMapper">
+    <resultMap id="studentMap" type="com.tyson.entity.Student">
+        <id column="id" property="id" javaType="int" jdbcType="INTEGER"/>
+        <result column="name" property="name"/>
+        <!--<result column="sex" property="sex" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>-->
+        <!--<result column="sex" property="sex" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>-->
+        <result column="sex" property="sex" typeHandler="com.tyson.typeHandler.SexEnumTypeHandler"/>
+        <!--select指定特定的SQL去查询，column指定传给SQL的参数，如果是多个参数，则用逗号分隔-->
+        <association property="sc" column="id" fetchType="lazy"
+                     select="com.tyson.mapper.StudentCardMapper.findStudentCardByStudentId"/>
+        <!--select指定特定的SQL去查询，column指定传给SQL的参数，如果是多个参数，则用逗号分隔-->
+        <collection property="studentLectureList" column="id" fetchType="eager"
+                    select="com.tyson.mapper.StudentLectureMapper.findStudentLectureByStudentId"/>
+        
+        <discriminator javaType="int" column="sex">
+            <case value="1" resultMap="maleStudentMap"/>
+            <case value="2" resultMap="femaleStudentMap"/>
+        </discriminator>
+    </resultMap>
+    <resultMap id="maleStudentMap" type="maleStudent" extends="studentMap">
+        <collection property="maleStudentHealthList" column="id" fetchType="lazy"
+                    select="com.tyson.mapper.MaleStudentHealthMapper.findMaleStudentHealthByStuId"/>
+    </resultMap>
+    <resultMap id="femaleStudentMap" type="femaleStudent" extends="studentMap">
+        <collection property="femaleStudentHealthList" column="id" fetchType="lazy"
+                    select="com.tyson.mapper.FemaleStudentHealthMapper.findFemaleStudentHealthByStuId"/>
+    </resultMap>
+
+    <!--statementType="CALLABLE"表示用存储过程执行它，通过配置mode，mybatis会帮我们回填gesCount-->
+    <select id="gesCount" parameterType="com.tyson.pojo.ProcedureParam" statementType="CALLABLE">
+        call gesture_count(
+        #{sex, mode=IN, jdbcType=INTEGER},
+        #{gesCount, mode=OUT, jdbcType=INTEGER}
+        )
+    </select>
+
+    <select id="findStudent" parameterType="int" resultMap = "studentMap">
+        select id, name, sex from student where id = #{id}
+    </select>
+    <insert id="insertStudent" parameterType="com.tyson.entity.Student">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into student(name, sex) values(#{name},
+        #{sex, typeHandler=com.tyson.typeHandler.SexEnumTypeHandler})
+    </insert>
+</mapper>
